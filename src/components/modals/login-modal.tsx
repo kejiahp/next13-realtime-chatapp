@@ -2,6 +2,7 @@ import React from "react";
 import { useLogin } from "@/hooks/useLogin";
 import Modal from "@/components/ui/modal";
 import { Input } from "@/components/ui/input";
+import LoginForm from "../authentication/login-form";
 
 type Props = {};
 
@@ -12,15 +13,8 @@ function LoginModal({}: Props) {
   }));
 
   return (
-    <Modal
-      title={"This is the title"}
-      description={"This is the description"}
-      isOpen={isOpen}
-      onClose={onClose}
-    >
-      <form>
-        <Input placeholder="email" />
-      </form>
+    <Modal title={""} description={""} isOpen={isOpen} onClose={onClose}>
+      <LoginForm />
     </Modal>
   );
 }
