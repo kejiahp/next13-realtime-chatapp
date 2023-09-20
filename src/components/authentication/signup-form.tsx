@@ -1,8 +1,6 @@
 "use client";
 
 import Logo from "../logo/logo";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
 import { Button } from "../ui/button";
 import { Icons } from "../ui/icons";
 import { useState } from "react";
@@ -13,14 +11,10 @@ import {
 } from "@/schema/authentication";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  FormDescription,
-  FormErrorMessage,
-} from "../ui/form-components/form-comps";
+import { FormInputField } from "../ui/form-components/form-item";
+import { notify } from "@/hooks/useToast";
 
-type Props = {};
-
-function SignUpForm({}: Props) {
+function SignUpForm() {
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -31,41 +25,86 @@ function SignUpForm({}: Props) {
     resolver: zodResolver(register_user_validator),
   });
 
-  const onSubmitHandler = (inputData: RegisterUserValidatorType) => {
-    console.log(inputData);
+  const onSubmitHandler = async (inputData: RegisterUserValidatorType) => {
+    setIsLoading(true);
 
-    // registerUserService()
+    try {
+      const formData = new FormData();
+      formData.append("email", inputData.email);
+      formData.append("password", inputData.password);
+      formData.append("username", inputData.username);
+      formData.append("profilePhoto", inputData.profilePhoto[0]);
+
+      await registerUserService(formData);
+      notify({
+        types: "success",
+        message: "Registration Successful",
+      });
+    } catch (error: any) {
+      console.log(error);
+
+      if (
+        error.response.data.details === "user with this email already exist"
+      ) {
+        notify({
+          types: "error",
+          message: "user with this email already exist",
+        });
+      } else {
+        notify({
+          types: "error",
+          message: "something went wrong",
+        });
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <form className="rounded-lg shadow-lg dark:shadow-none flex flex-col gap-4 p-5">
       <Logo />
 
-      <div>
-        <Label htmlFor="username">Username</Label>
-        <Input id="username" placeholder="kilogram@gmail.com" type="text" />
-        <FormDescription description="fdgnunniunoinm" />
-        <FormErrorMessage errorMessage={errors.username?.message} />
-      </div>
+      <FormInputField
+        id={"username"}
+        label="Username"
+        placeholder={"kilogram"}
+        errorMessage={errors.username?.message}
+        register={register("username", { required: true })}
+        disabled={false}
+        type={"text"}
+      />
 
-      <div>
-        <Label htmlFor="email">Email</Label>
-        <Input id="email" placeholder="kilogram@gmail.com" type="email" />
-      </div>
+      <FormInputField
+        id={"email"}
+        label="Email"
+        placeholder={"kilogram@gmail.com"}
+        errorMessage={errors.email?.message}
+        register={register("email", { required: true })}
+        disabled={false}
+        type={"email"}
+      />
 
-      <div>
-        <Label htmlFor="password">Password</Label>
-        <Input
-          id="password"
-          placeholder="kilogram_sama_UwU😳"
-          type="password"
-        />
-      </div>
+      <FormInputField
+        id={"password"}
+        label="Password"
+        placeholder={"kilogram_sama_UwU😳"}
+        errorMessage={errors.password?.message}
+        register={register("password", { required: true })}
+        disabled={false}
+        type={"password"}
+      />
 
-      <div>
-        <Label htmlFor="profile-photo">Profile Photo</Label>
-        <Input id="profile-photo" type="file" accept="image/*" />
-      </div>
+      <FormInputField
+        id={"profilePhoto"}
+        label="Profile Photo"
+        accept="image/*"
+        type={"file"}
+        errorMessage={errors.profilePhoto ? "invalid profile photo" : ""}
+        register={register("profilePhoto", { required: true })}
+        disabled={false}
+        placeholder={"select profile photo"}
+      />
 
       <Button
         variant={"secondary"}

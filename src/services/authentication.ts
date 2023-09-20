@@ -1,8 +1,7 @@
-import axios from "axios";
-import { BASE_URL } from "./axios-utils";
+import { BASE_URL, publicRequest } from "./axios-utils";
 
 export const registerUserService = async (payload: any) => {
-  const res = await axios.post(`/auth/signup`, payload);
+  const res = await publicRequest.post(`/auth/signup`, payload);
   return res.data;
 };
 
@@ -14,7 +13,7 @@ export const loginUserService = async (user: {
   try {
     const { shortName, ...payload } = user;
     const loginURL = `${BASE_URL}/auth/login`;
-    const res = await axios.post(loginURL, payload);
+    const res = await publicRequest.post(loginURL, payload);
     return res.data;
   } catch (error: any) {
     if (!error?.response) {

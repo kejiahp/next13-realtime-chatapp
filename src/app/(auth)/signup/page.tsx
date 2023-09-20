@@ -11,9 +11,7 @@ export const metadata: Metadata = {
   description: "Create a kilogram account now and start chatting",
 };
 
-type Props = {};
-
-function Page({}: Props) {
+function Page() {
   return (
     <>
       <div className="container relative h-[800px] flex-col items-center justify-center grid lg:max-w-none lg:grid-cols-2 lg:px-0">
@@ -47,9 +45,10 @@ function Page({}: Props) {
               <p className="text-lg">
                 &ldquo; Welcome to our chat web application - a place where
                 connection meets simplicity. Say hello to seamless conversations
-                and real-time communication. Join the conversation and let's
-                make every moment unforgettable. Get ready to chat, connect, and
-                create memories together. Welcome to the future of chat!&rdquo;
+                and real-time communication. Join the conversation and
+                let&lsquo;s make every moment unforgettable. Get ready to chat,
+                connect, and create memories together. Welcome to the future of
+                chat!&rdquo;
               </p>
               <footer className="text-sm">-Elijah Papi</footer>
               <p className="text-sm text-purple-500">

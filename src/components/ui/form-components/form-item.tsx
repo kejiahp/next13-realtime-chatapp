@@ -1,28 +1,90 @@
 import { Input } from "../input";
 import { Label } from "../label";
+import { Textarea } from "../textarea";
 import { FormDescription, FormErrorMessage } from "./form-comps";
 
-export const FormInputItem = () => {
+type FormInputFieldType = {
+  id: string;
+  label?: string;
+  description?: string;
+  placeholder: string;
+  accept?: string;
+  errorMessage: string | undefined;
+  register: any;
+  disabled: boolean;
+  type: React.HTMLInputTypeAttribute;
+};
+
+export const FormInputField: React.FC<FormInputFieldType> = ({
+  id,
+  label,
+  description,
+  placeholder,
+  accept,
+  errorMessage,
+  register,
+  disabled,
+  type,
+}) => {
   return (
     <>
       <div>
-        <Label htmlFor="username">Username</Label>
-        <Input id="username" placeholder="kilogram@gmail.com" type="text" />
-        <FormDescription description="fdgnunniunoinm" />
-        <FormErrorMessage errorMessage={""} />
+        {label && <Label htmlFor={id}>{label}</Label>}
+        <Input
+          id={id}
+          placeholder={placeholder}
+          type={type}
+          disabled={disabled}
+          accept={accept}
+          {...register}
+        />
+        {description && <FormDescription description={description} />}
+        <FormErrorMessage errorMessage={errorMessage} />
       </div>
     </>
   );
 };
 
-export const FormTextAreaItem = () => {
+type FormTextareaFieldType = {
+  id: string;
+  cols?: number;
+  rows?: number;
+  label?: string;
+  description?: string;
+  placeholder: string;
+  accept?: string;
+  errorMessage: string | undefined;
+  register: any;
+  disabled: boolean;
+};
+
+export const FormTextAreaField: React.FC<FormTextareaFieldType> = ({
+  id,
+  cols,
+  rows,
+  label,
+  description,
+  placeholder,
+  accept,
+  errorMessage,
+  register,
+  disabled,
+}) => {
   return (
     <>
       <div>
-        <Label htmlFor="username">Username</Label>
-        <Input id="username" placeholder="kilogram@gmail.com" type="text" />
-        <FormDescription description="fdgnunniunoinm" />
-        <FormErrorMessage errorMessage={""} />
+        {label && <Label htmlFor={id}>{label}</Label>}
+        <Textarea
+          id={id}
+          placeholder={placeholder}
+          disabled={disabled}
+          accept={accept}
+          cols={cols}
+          rows={rows}
+          {...register}
+        />
+        {description && <FormDescription description={description} />}
+        <FormErrorMessage errorMessage={errorMessage} />
       </div>
     </>
   );
