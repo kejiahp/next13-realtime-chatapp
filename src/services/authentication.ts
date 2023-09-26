@@ -1,18 +1,20 @@
+"use client";
+
+import axios from "axios";
 import { BASE_URL, publicRequest } from "./axios-utils";
+import { getCookie } from "@/lib/authUtils/cookieCtrl";
 
 export const registerUserService = async (payload: any) => {
   const res = await publicRequest.post(`/auth/signup`, payload);
   return res.data;
 };
 
-export const loginUserService = async (user: {
+export const loginUserService = async (payload: {
   email: string;
-  shortName: string;
   password: string;
 }) => {
   try {
-    const { shortName, ...payload } = user;
-    const loginURL = `${BASE_URL}/auth/login`;
+    const loginURL = `/auth/login`;
     const res = await publicRequest.post(loginURL, payload);
     return res.data;
   } catch (error: any) {
@@ -25,5 +27,21 @@ export const loginUserService = async (user: {
     } else {
       throw new Error("Login Failed");
     }
+  }
+};
+
+export const logOutService = async () => {
+  try {
+    const refreshToken = getCookie("rtk");
+    const res = await axios.post(
+      `${BASE_URL}/api/v1/auth/logout`,
+      {},
+      {
+        headers: { Authorization: `Bearer ${refreshToken}` },
+      }
+    );
+    return res.data;
+  } catch (error: any) {
+    console.log(error);
   }
 };

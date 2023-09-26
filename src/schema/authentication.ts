@@ -16,3 +16,15 @@ export const register_user_validator = z.object({
 });
 
 export type RegisterUserValidatorType = z.infer<typeof register_user_validator>;
+
+export const login_validator = z.object({
+  email: z
+    .string({ required_error: "email is required" })
+    .email()
+    .nonempty("email is required"),
+  password: z
+    .string({ required_error: "password is required" })
+    .nonempty("password is required"),
+});
+
+export type LoginValidatorType = z.infer<typeof login_validator>;
