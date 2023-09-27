@@ -9,16 +9,18 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 type Props = {
-  trigger?: React.ReactElement;
+  image?: string | undefined;
+  fallback: string | undefined;
+  logoutfn?: () => void;
 };
 
-function Dropdown({ trigger }: Props) {
+function Dropdown({ image, fallback, logoutfn }: Props) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
         <Avatar>
-          <AvatarImage src="https://github.com/shadcn.png" />
-          <AvatarFallback>CN</AvatarFallback>
+          <AvatarImage src={image} />
+          <AvatarFallback>{fallback?.slice(0, 1)}</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
 
@@ -26,9 +28,7 @@ function Dropdown({ trigger }: Props) {
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem>Profile</DropdownMenuItem>
-        <DropdownMenuItem>Billing</DropdownMenuItem>
-        <DropdownMenuItem>Team</DropdownMenuItem>
-        <DropdownMenuItem>Subscription</DropdownMenuItem>
+        <DropdownMenuItem onClick={logoutfn}>Logout</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

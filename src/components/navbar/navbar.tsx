@@ -1,19 +1,51 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Input } from "../ui/input";
-import { Bell, Search } from "lucide-react";
+import { Bell, Loader, Search } from "lucide-react";
 import Logo from "../logo/logo";
 import Dropdown from "../dropdown/dropdown";
 import ThemeToggle from "../ui/theme-toggle";
 import SideDrawer from "../chat/SideDrawer";
 import { useSearchDrawer } from "@/hooks/useSearchDrawer";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import { deleteCookie } from "@/lib/authUtils/cookieCtrl";
+import { logOutService } from "@/services/authentication";
+import { useCurrentUser } from "@/lib/authUtils/authHooks";
 
 function NavBar() {
+  const [isLoading, setIsLoading] = useState(false);
+
   const { onOpen } = useSearchDrawer((state) => ({
     isOpen: state.isOpen,
     onOpen: state.onOpen,
   }));
+
+  const currentUser = useCurrentUser();
+
+  const router = useRouter();
+
+  const logoutfn = async () => {
+    setIsLoading(true);
+
+    logOutService()
+      .then(() => {
+        deleteCookie("tk");
+        deleteCookie("rtk");
+      })
+      .catch(() => {
+        deleteCookie("tk");
+        deleteCookie("rtk");
+      })
+      .finally(() => {
+        setIsLoading(false);
+
+        toast.success("successfully logged out");
+        router.push("/login");
+        router.refresh();
+      });
+  };
 
   return (
     <>
@@ -36,7 +68,15 @@ function NavBar() {
         <div className="flex items-center gap-5">
           <Bell />
           <ThemeToggle />
-          <Dropdown />
+          {isLoading ? (
+            <Loader className="animate-spin" />
+          ) : (
+            <Dropdown
+              image={currentUser?.profilePhoto}
+              fallback={currentUser?.username}
+              logoutfn={logoutfn}
+            />
+          )}
         </div>
       </div>
     </>

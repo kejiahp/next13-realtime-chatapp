@@ -27,7 +27,7 @@ export function getServerSideUser() {
   }
 }
 
-export const getMiddlewareCurrentUser = (request: any) => {
+export function getMiddlewareCurrentUser(request: any) {
   const currentUserAccessToken = request.cookies.get("tk");
 
   if (!currentUserAccessToken) {
@@ -40,4 +40,4 @@ export const getMiddlewareCurrentUser = (request: any) => {
   } catch (error: any) {
     return null;
   }
-};
+}

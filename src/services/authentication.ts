@@ -1,5 +1,3 @@
-"use client";
-
 import axios from "axios";
 import { BASE_URL, publicRequest } from "./axios-utils";
 import { getCookie } from "@/lib/authUtils/cookieCtrl";
@@ -33,6 +31,7 @@ export const loginUserService = async (payload: {
 export const logOutService = async () => {
   try {
     const refreshToken = getCookie("rtk");
+    console.log(refreshToken);
     const res = await axios.post(
       `${BASE_URL}/api/v1/auth/logout`,
       {},
