@@ -13,12 +13,17 @@ import toast from "react-hot-toast";
 import { deleteCookie } from "@/lib/authUtils/cookieCtrl";
 import { logOutService } from "@/services/authentication";
 import { useCurrentUser } from "@/lib/authUtils/authHooks";
+import { useProfile } from "@/hooks/useProfile";
 
 function NavBar() {
   const [isLoading, setIsLoading] = useState(false);
 
   const { onOpen } = useSearchDrawer((state) => ({
     isOpen: state.isOpen,
+    onOpen: state.onOpen,
+  }));
+
+  const { onOpen: profileOnOpen } = useProfile((state) => ({
     onOpen: state.onOpen,
   }));
 
@@ -75,6 +80,7 @@ function NavBar() {
               image={currentUser?.profilePhoto}
               fallback={currentUser?.username}
               logoutfn={logoutfn}
+              openProfilefn={profileOnOpen}
             />
           )}
         </div>

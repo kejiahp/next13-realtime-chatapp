@@ -12,9 +12,10 @@ type Props = {
   image?: string | undefined;
   fallback: string | undefined;
   logoutfn?: () => void;
+  openProfilefn?: () => void;
 };
 
-function Dropdown({ image, fallback, logoutfn }: Props) {
+function Dropdown({ image, fallback, logoutfn, openProfilefn }: Props) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -27,7 +28,7 @@ function Dropdown({ image, fallback, logoutfn }: Props) {
       <DropdownMenuContent>
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Profile</DropdownMenuItem>
+        <DropdownMenuItem onClick={openProfilefn}>Profile</DropdownMenuItem>
         <DropdownMenuItem onClick={logoutfn}>Logout</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-type IUseLoginStore = {
+type IStore = {
   isOpen: boolean;
 };
 
@@ -9,7 +9,7 @@ type Actions = {
   onClose: () => void;
 };
 
-export const useLogin = create<IUseLoginStore & Actions>()((set) => ({
+export const useProfile = create<IStore & Actions>()((set) => ({
   isOpen: false,
   onOpen: () =>
     set(() => ({

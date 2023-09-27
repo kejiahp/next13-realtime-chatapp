@@ -18,7 +18,14 @@ type DecodedToken = {
 export function setCookieFromJWT(cname: string, ctoken: string) {
   try {
     const decoded: DecodedToken = jwtDecode(ctoken);
-    const expiryDate = new Date(decoded.exp * 1000).toUTCString();
+    let expUnix = decoded.exp;
+    if (cname === "tk") {
+      expUnix = expUnix + 60 * 60 * 24;
+    }
+
+    console.log(cname, new Date(expUnix * 1000));
+
+    const expiryDate = new Date(expUnix * 1000).toUTCString();
 
     let expires = "expires=" + expiryDate;
     document.cookie = cname + "=" + ctoken + ";" + expires + ";path=/";
