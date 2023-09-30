@@ -1,4 +1,4 @@
-import { Eye, Send } from "lucide-react";
+import { ChevronLeft, Eye, Send } from "lucide-react";
 import React from "react";
 
 import { Button } from "../ui/button";
@@ -9,6 +9,10 @@ function ChatBox() {
   return (
     <div className="p-3 h-full md:mr-3">
       <div className="flex items-center justify-between">
+        <div className="md:hidden flex w-10 h-10 justify-center items-center rounded-md cursor-pointer bg-purple-400">
+          <ChevronLeft size={20} className="rounded-md" />
+        </div>
+
         <h1 className="text-xl">ChatBox</h1>
 
         <div className="flex w-10 h-10 justify-center items-center rounded-md cursor-pointer bg-purple-400">
