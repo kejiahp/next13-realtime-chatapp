@@ -1,6 +1,6 @@
 "use client";
 
-import { getCookie, getCurrentUser } from "@/lib/authUtils/cookieCtrl";
+import { getCurrentUser } from "@/lib/authUtils/cookieCtrl";
 import { useEffect, useState } from "react";
 
 export const useCurrentUser = () => {
@@ -20,24 +20,4 @@ export const useCurrentUser = () => {
     return currentUser;
   }
   return null;
-};
-
-export const useGetAccessToken = () => {
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, [isMounted]);
-
-  return isMounted ? getCookie("tk") : null;
-};
-
-export const useGetRefreshToken = () => {
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, [isMounted]);
-
-  return isMounted ? getCookie("rtk") : null;
 };

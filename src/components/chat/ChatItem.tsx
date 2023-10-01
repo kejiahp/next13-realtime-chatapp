@@ -19,7 +19,7 @@ function ChatItem({
         selected ? "bg-purple-500" : ""
       } shadow-sm rounded-md py-2 px-4 cursor-pointer hover:bg-purple-500 hover:text-white transform transition-all duration-200`}
     >
-      <h1>{name}</h1>
+      <h1 className="capitalize font-bold">{name}</h1>
       <p className="font-bold text-sm">
         {lastestMessageSender}:{" "}
         <span className="font-normal">

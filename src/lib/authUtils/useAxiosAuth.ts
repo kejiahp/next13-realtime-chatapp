@@ -5,13 +5,16 @@ import jwtDecode from "jwt-decode";
 import { useEffect } from "react";
 import axios, { AxiosError, AxiosHeaders } from "axios";
 
-import { deleteCookie, setCookieFromJWT } from "@/lib/authUtils/cookieCtrl";
+import {
+  deleteCookie,
+  getCookie,
+  setCookieFromJWT,
+} from "@/lib/authUtils/cookieCtrl";
 import privateRequest, { BASE_URL } from "@/services/axios-utils";
-import { useGetAccessToken, useGetRefreshToken } from "./authHooks";
 
 const useAxiosAuth = () => {
-  const ACCESS_TOKEN = useGetAccessToken();
-  const REFRESH_TOKEN = useGetRefreshToken();
+  const ACCESS_TOKEN = getCookie("tk");
+  const REFRESH_TOKEN = getCookie("rtk");
 
   useEffect(() => {
     const requestIntercept = privateRequest.interceptors.request.use(
@@ -56,7 +59,7 @@ const useAxiosAuth = () => {
     return () => {
       privateRequest.interceptors.request.eject(requestIntercept);
     };
-  }, [ACCESS_TOKEN, REFRESH_TOKEN]);
+  }, []);
 
   return privateRequest;
 };

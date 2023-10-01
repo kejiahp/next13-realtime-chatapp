@@ -71,17 +71,21 @@ function NavBar() {
         </div>
 
         <div className="flex items-center gap-5">
-          <Bell />
+          {currentUser?.uid && <Bell />}
           <ThemeToggle />
-          {isLoading ? (
-            <Loader className="animate-spin" />
-          ) : (
-            <Dropdown
-              image={currentUser?.profilePhoto}
-              fallback={currentUser?.username}
-              logoutfn={logoutfn}
-              openProfilefn={profileOnOpen}
-            />
+          {currentUser?.uid && (
+            <>
+              {isLoading ? (
+                <Loader className="animate-spin" />
+              ) : (
+                <Dropdown
+                  image={currentUser?.profilePhoto}
+                  fallback={currentUser?.username}
+                  logoutfn={logoutfn}
+                  openProfilefn={profileOnOpen}
+                />
+              )}
+            </>
           )}
         </div>
       </div>

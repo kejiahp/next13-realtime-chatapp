@@ -5,11 +5,15 @@ type Props = {
   image: string;
   username: string;
   email: string;
+  onClick: React.MouseEventHandler<HTMLDivElement>;
 };
 
-function SideDrawerUser({ image, username, email }: Props) {
+function SideDrawerUser({ image, username, email, onClick }: Props) {
   return (
-    <div className="flex items-center p-2 gap-3 cursor-pointer hover:bg-purple-600 hover:text-white dark:hover:text-black transition-all duration-200">
+    <div
+      onClick={onClick}
+      className="flex items-center p-2 gap-3 cursor-pointer hover:bg-purple-600 hover:text-white dark:hover:text-black transition-all duration-200"
+    >
       <Avatar>
         <AvatarImage src={image} />
         <AvatarFallback>{username?.slice(0, 1)}</AvatarFallback>

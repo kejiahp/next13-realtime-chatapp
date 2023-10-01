@@ -19,7 +19,7 @@ function SideDrawer() {
   const [data, setData] = useState<SearchUser[]>([]);
   const authRequest = useAxiosAuth();
 
-  const onSearchHandler = async (
+  const onSearchHandler = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
@@ -43,9 +43,19 @@ function SideDrawer() {
       });
   };
 
-  // const getOrCreateChatWithUser = (userId: string) => {
-  //   authRequest.post(`/chat`, {userId}).then(() => {}).catch(() => {}).finally(() => {})
-  // }
+  const createOrGetExistingChat = (userId: string) => {
+    authRequest
+      .post(`/chat`, { userId })
+      .then(() => {
+        onClose();
+      })
+      .catch(() => {
+        toast.error("oops...couldn't start chat");
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
 
   const { isOpen, onClose } = useSearchDrawer((state) => ({
     isOpen: state.isOpen,
@@ -95,6 +105,7 @@ function SideDrawer() {
             <>
               {data?.map((item, index) => (
                 <SideDrawerUser
+                  onClick={() => createOrGetExistingChat(item._id)}
                   key={index}
                   image={item?.profilePhoto}
                   username={item?.username}

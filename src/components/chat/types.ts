@@ -10,3 +10,19 @@ export type SearchUser = {
   updatedAt: string;
   __v: number;
 };
+
+export type UserChats = {
+  _id: string;
+  chatName: string;
+  latestMessage: {
+    sender: string;
+    content: string;
+    chat: string;
+  };
+  isGroupChat: boolean;
+  users: Omit<SearchUser, "password">[];
+  groupAdmin: Omit<SearchUser, "password">[];
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+};

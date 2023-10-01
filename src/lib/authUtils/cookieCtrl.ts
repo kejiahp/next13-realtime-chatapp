@@ -23,8 +23,6 @@ export function setCookieFromJWT(cname: string, ctoken: string) {
       expUnix = expUnix + 60 * 60 * 24;
     }
 
-    console.log(cname, new Date(expUnix * 1000));
-
     const expiryDate = new Date(expUnix * 1000).toUTCString();
 
     let expires = "expires=" + expiryDate;
@@ -41,7 +39,10 @@ export function setCookieFromJWT(cname: string, ctoken: string) {
  * @param cname cookie name
  */
 export function deleteCookie(cname: string) {
-  document.cookie = cname + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  if (typeof document !== "undefined") {
+    document.cookie =
+      cname + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  }
 }
 
 /**
@@ -51,7 +52,7 @@ export function deleteCookie(cname: string) {
  * @param cname cookie name
  */
 export function getCookie(cname: string) {
-  if (window !== undefined) {
+  if (typeof window !== "undefined") {
     let name = cname + "=";
     let decodedCookie = decodeURIComponent(document.cookie);
     let ca = decodedCookie.split(";");
