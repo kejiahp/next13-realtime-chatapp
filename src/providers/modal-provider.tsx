@@ -1,6 +1,8 @@
 "use client";
 
+import CreateGroupChatModal from "@/components/modals/create-groupchat-modal";
 import ProfileModal from "@/components/modals/profile-modal";
+import UpdateGroupChatModal from "@/components/modals/update-groupchat-modal";
 import { useEffect, useState } from "react";
 
 export const ModalProvider = () => {
@@ -17,6 +19,8 @@ export const ModalProvider = () => {
   return (
     <>
       <ProfileModal />
+      <CreateGroupChatModal />
+      <UpdateGroupChatModal />
     </>
   );
 };

@@ -1,57 +1,50 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import useSWR from "swr";
+
+import { Plus } from "lucide-react";
 
 import { Button } from "../ui/button";
-import { Plus } from "lucide-react";
 import ChatItem from "./ChatItem";
-import useAxiosAuth from "@/lib/authUtils/useAxiosAuth";
-import { SearchUser, UserChats } from "./types";
+import { UserChats } from "./types";
 import { Skeleton } from "../ui/skeleton";
 import EmptyState from "../empty-state/EmptyState";
 import { useCurrentUser } from "@/lib/authUtils/authHooks";
-
-function getSender(
-  currentUserId: string | undefined,
-  users: Omit<SearchUser, "password">[]
-) {
-  if (!currentUserId) return users[0].username || "anonymous";
-
-  return (
-    users.find((item) => item._id !== currentUserId)?.username || "anonymous"
-  );
-}
+import { useGroupChatModal } from "@/hooks/useGroupChatModal";
+import modifiedPrivateRequester from "@/services/privatier";
+import { useSelectedChat } from "@/hooks/useSelectedChat";
+import { getSender } from "@/lib/chatUtils";
 
 function MyChats() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState(false);
-  const [chats, setChats] = useState<UserChats[]>([]);
-
   const currentUser = useCurrentUser();
-  const authRequest = useAxiosAuth();
+
+  const { isLoading, error, data } = useSWR<UserChats[]>(
+    `/chat`,
+    (url: string) => modifiedPrivateRequester.get(url).then((res) => res.data)
+  );
+
+  const { onOpen } = useGroupChatModal((state) => ({ onOpen: state.onOpen }));
+  const { setChat, chat } = useSelectedChat((state) => ({
+    setChat: state.setChat,
+    chat: state.chat,
+  }));
 
   useEffect(() => {
-    setIsLoading(true);
-    authRequest
-      .get<UserChats[]>(`/chat`)
-      .then((res) => {
-        setChats(res.data);
-      })
-      .catch((error) => {
-        console.log(error);
-        setIsError(true);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, [authRequest]);
+    if (chat && data) {
+      const values = data.find((item) => item._id === chat._id);
+      if (values) {
+        setChat(values);
+      }
+    }
+  }, [data]);
 
   return (
     <div className="p-3 flex flex-col gap-5">
       <div className="my-3 flex flex-wrap items-center gap-3 justify-between">
         <h1 className="text-2xl">My Chats</h1>
 
-        <Button size={"sm"} variant={"secondary"}>
+        <Button size={"sm"} variant={"secondary"} onClick={onOpen}>
           <div className="flex items-center gap-2">
             <p>New Group Chat</p>
             <Plus />
@@ -62,10 +55,12 @@ function MyChats() {
       <div className="flex flex-col gap-3">
         {isLoading ? (
           <Skeleton className="h-[60px] w-full" />
-        ) : !isError ? (
+        ) : !error ? (
           <>
-            {chats?.map((item, index) => (
+            {data?.map((item, index) => (
               <ChatItem
+                selected={chat?._id === item._id}
+                onClick={() => setChat(item)}
                 key={index}
                 name={
                   item.isGroupChat

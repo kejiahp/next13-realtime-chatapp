@@ -1,3 +1,7 @@
+import StateManagedSelect from "react-select";
+import CreatableSelect from "react-select/creatable";
+import type AsyncSelect from "react-select/async";
+
 import { Input } from "../input";
 import { Label } from "../label";
 import { Textarea } from "../textarea";
@@ -83,6 +87,69 @@ export const FormTextAreaField: React.FC<FormTextareaFieldType> = ({
           rows={rows}
           {...register}
         />
+        {description && <FormDescription description={description} />}
+        <FormErrorMessage errorMessage={errorMessage} />
+      </div>
+    </>
+  );
+};
+
+interface FormCustomSelectType {
+  id: string;
+  selectType: StateManagedSelect | CreatableSelect | AsyncSelect;
+  maxMenuHeight?: number;
+  onChangeHandler: (e: any) => void;
+  options?: any;
+  loadOptions?: any;
+  cacheOptions?: any;
+  label?: string;
+  placeholder: string;
+  defaultValue: string | string[] | number;
+  multiple?: boolean;
+  disabled: boolean;
+  isloading?: boolean;
+  errorMessage: string | undefined;
+  required: boolean;
+  description?: any;
+}
+
+export const FormCustomSelectField: React.FC<FormCustomSelectType> = ({
+  id,
+  options,
+  loadOptions,
+  cacheOptions,
+  label,
+  placeholder,
+  defaultValue,
+  multiple,
+  disabled,
+  isloading,
+  errorMessage,
+  description,
+  selectType: SelectFieldType,
+  maxMenuHeight = 100,
+  onChangeHandler,
+  required,
+}) => {
+  return (
+    <>
+      <div>
+        {label && <Label htmlFor={id}>{label}</Label>}
+        <SelectFieldType
+          isLoading={isloading}
+          id={id}
+          required={required}
+          options={options}
+          loadOptions={loadOptions}
+          cacheOptions={cacheOptions}
+          maxMenuHeight={maxMenuHeight}
+          onChange={onChangeHandler}
+          isDisabled={disabled}
+          defaultValue={defaultValue}
+          isMulti={multiple}
+          placeholder={placeholder}
+        />
+
         {description && <FormDescription description={description} />}
         <FormErrorMessage errorMessage={errorMessage} />
       </div>

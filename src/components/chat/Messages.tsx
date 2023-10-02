@@ -6,7 +6,7 @@ type Props = {
 export const SenderMessage = ({ isUser, message }: Props) => {
   return (
     <div
-      className={`w-full flex items-center ${
+      className={`my-2 w-full flex items-center ${
         isUser ? "justify-end" : "justify-start"
       }`}
     >

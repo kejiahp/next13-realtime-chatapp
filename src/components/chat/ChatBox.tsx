@@ -1,23 +1,56 @@
+"use client";
+
 import { ChevronLeft, Eye, Send } from "lucide-react";
 import React from "react";
 
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
 import { SenderMessage } from "./Messages";
+import { useSelectedChat } from "@/hooks/useSelectedChat";
+import { getSender } from "@/lib/chatUtils";
+import { useCurrentUser } from "@/lib/authUtils/authHooks";
+import { useUpdateGroupChat } from "@/hooks/useGroupChatModal";
 
 function ChatBox() {
+  const { selectedChat, setChat } = useSelectedChat((state) => ({
+    selectedChat: state.chat,
+    setChat: state.setChat,
+  }));
+  const onOpen = useUpdateGroupChat((state) => state.onOpen);
+  const currentUser = useCurrentUser();
+
+  if (!selectedChat) {
+    return (
+      <div className="p-3 md:mr-3 h-full w-full flex justify-center items-center">
+        <h1 className="text-xl">Select a conversation to begin chatting 👍</h1>
+      </div>
+    );
+  }
+
   return (
     <div className="p-3 h-full md:mr-3">
       <div className="flex items-center justify-between">
-        <div className="md:hidden flex w-10 h-10 justify-center items-center rounded-md cursor-pointer bg-purple-400">
+        <div
+          onClick={() => setChat(null)}
+          className="md:hidden flex w-10 h-10 justify-center items-center rounded-md cursor-pointer bg-purple-400"
+        >
           <ChevronLeft size={20} className="rounded-md" />
         </div>
 
-        <h1 className="text-xl">ChatBox</h1>
+        <h1 className="text-xl">
+          {selectedChat.isGroupChat
+            ? selectedChat.chatName
+            : getSender(currentUser?.uid, selectedChat.users)}
+        </h1>
 
-        <div className="flex w-10 h-10 justify-center items-center rounded-md cursor-pointer bg-purple-400">
-          <Eye size={20} className="rounded-md" />
-        </div>
+        {selectedChat.isGroupChat && (
+          <div
+            onClick={onOpen}
+            className="flex w-10 h-10 justify-center items-center rounded-md cursor-pointer bg-purple-400"
+          >
+            <Eye size={20} className="rounded-md" />
+          </div>
+        )}
       </div>
 
       {/* h-[calc(100%-142px)] */}
