@@ -54,7 +54,11 @@ function MyChats() {
 
       <div className="flex flex-col gap-3">
         {isLoading ? (
-          <Skeleton className="h-[60px] w-full" />
+          <>
+            {Array.from({ length: 5 }).map((_, index) => (
+              <Skeleton key={index} className="h-[60px] w-full" />
+            ))}
+          </>
         ) : !error ? (
           <>
             {data?.map((item, index) => (
@@ -67,7 +71,9 @@ function MyChats() {
                     ? item.chatName
                     : getSender(currentUser?.uid, item.users)
                 }
-                lastestMessageSender={item?.latestMessage?.sender || ""}
+                lastestMessageSender={
+                  item?.latestMessage?.sender?.username || ""
+                }
                 lastestMessage={item?.latestMessage?.content || ""}
               />
             ))}

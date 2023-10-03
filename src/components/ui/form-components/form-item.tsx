@@ -6,6 +6,7 @@ import { Input } from "../input";
 import { Label } from "../label";
 import { Textarea } from "../textarea";
 import { FormDescription, FormErrorMessage } from "./form-comps";
+import { HTMLAttributes, TextareaHTMLAttributes } from "react";
 
 type FormInputFieldType = {
   id: string;
@@ -60,6 +61,8 @@ type FormTextareaFieldType = {
   errorMessage: string | undefined;
   register: any;
   disabled: boolean;
+  className: string;
+  resizable: boolean;
 };
 
 export const FormTextAreaField: React.FC<FormTextareaFieldType> = ({
@@ -73,12 +76,15 @@ export const FormTextAreaField: React.FC<FormTextareaFieldType> = ({
   errorMessage,
   register,
   disabled,
+  className,
+  resizable,
 }) => {
   return (
     <>
-      <div>
+      <div className={className}>
         {label && <Label htmlFor={id}>{label}</Label>}
         <Textarea
+          className={`${resizable ? "resize-none" : ""}`}
           id={id}
           placeholder={placeholder}
           disabled={disabled}
@@ -131,11 +137,18 @@ export const FormCustomSelectField: React.FC<FormCustomSelectType> = ({
   onChangeHandler,
   required,
 }) => {
+  const colourStyles = {
+    option: (styles: any) => ({
+      ...styles,
+      color: "purple",
+    }),
+  };
   return (
     <>
       <div>
         {label && <Label htmlFor={id}>{label}</Label>}
         <SelectFieldType
+          styles={colourStyles}
           isLoading={isloading}
           id={id}
           required={required}

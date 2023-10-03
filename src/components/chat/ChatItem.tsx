@@ -24,7 +24,7 @@ function ChatItem({
       <h1 className="capitalize font-bold">{name}</h1>
 
       <p className="font-bold text-sm">
-        {lastestMessageSender && lastestMessageSender}{" "}
+        {lastestMessageSender && lastestMessageSender + ": "}
         <span className="font-normal">
           {lastestMessage.length >= 30
             ? lastestMessage.slice(0, 30) + "..."

@@ -1,3 +1,5 @@
+"use client";
+
 import axios, { AxiosError, AxiosHeaders } from "axios";
 import jwtDecode from "jwt-decode";
 
