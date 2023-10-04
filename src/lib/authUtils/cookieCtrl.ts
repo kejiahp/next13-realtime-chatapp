@@ -3,7 +3,7 @@
 import { UserType } from "@/types/UserType";
 import jwtDecode from "jwt-decode";
 
-type DecodedToken = {
+export type DecodedToken = {
   iat: number;
   exp: number;
 } & UserType;

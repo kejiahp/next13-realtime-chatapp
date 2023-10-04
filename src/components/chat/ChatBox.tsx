@@ -1,7 +1,7 @@
 "use client";
 
-import { ChevronLeft, Eye, Send } from "lucide-react";
-import React, { useState } from "react";
+import { ChevronLeft, Dot, Eye, Send } from "lucide-react";
+import React, { useState, useEffect } from "react";
 
 import { Button } from "../ui/button";
 import { SenderMessage } from "./Messages";
@@ -9,9 +9,9 @@ import { useSelectedChat } from "@/hooks/useSelectedChat";
 import { getSender } from "@/lib/chatUtils";
 import { useCurrentUser } from "@/lib/authUtils/authHooks";
 import { useUpdateGroupChat } from "@/hooks/useGroupChatModal";
-import useSWR from "swr";
+import useSWRMutation from "swr/mutation";
 import modifiedPrivateRequester from "@/services/privatier";
-import { Message } from "./types";
+import { Message, UserChats } from "./types";
 import { Skeleton } from "../ui/skeleton";
 import EmptyState from "../empty-state/EmptyState";
 import toast from "react-hot-toast";
@@ -23,25 +23,73 @@ import {
   send_message_validator,
 } from "@/schema/messaging";
 import { useRouter } from "next/navigation";
+import { Socket, io } from "socket.io-client";
+import { BASE_URL } from "@/services/axios-utils";
+import { DecodedToken } from "@/lib/authUtils/cookieCtrl";
+import { DefaultEventsMap } from "@socket.io/component-emitter";
+import useSWR from "swr";
 
-function ChatBox() {
+let socket: Socket<DefaultEventsMap, DefaultEventsMap>,
+  selectedChatCompare: UserChats;
+
+type Props = {
+  currentUser: DecodedToken | null;
+};
+
+function ChatBox({ currentUser }: Props) {
   const [isLoading, setIsLoading] = useState(false);
+  const [typing, setTyping] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+
+  const [socketConnected, setSocketConnected] = useState(false);
 
   const { selectedChat, setChat } = useSelectedChat((state) => ({
     selectedChat: state.chat,
     setChat: state.setChat,
   }));
+
   const onOpen = useUpdateGroupChat((state) => state.onOpen);
-  const currentUser = useCurrentUser();
 
   const {
     isLoading: messagesLoading,
     data,
+    mutate: localMutate,
     error,
-    mutate,
-  } = useSWR<Message[]>(`/message/${selectedChat?._id}`, (url: string) =>
-    modifiedPrivateRequester.get(url).then((res) => res.data)
+  } = useSWR<Message[]>(
+    selectedChat?._id ? `/message/${selectedChat?._id}` : null,
+    (url: string) => modifiedPrivateRequester.get(url).then((res) => res.data)
   );
+
+  useEffect(() => {
+    //instanciating the socket will emit the connect event on the backend
+    socket = io(BASE_URL);
+    socket.emit("setup", currentUser);
+    socket.on("connected", () => setSocketConnected(true));
+
+    socket.on("typing", () => setIsTyping(true));
+    socket.on("stop_typing", () => setIsTyping(false));
+  }, []);
+
+  useEffect(() => {
+    socket.on("message_recieved", (newMessage: Message) => {
+      if (
+        !selectedChatCompare ||
+        selectedChatCompare._id !== newMessage.chat._id
+      ) {
+        // notification plus one
+      } else {
+        console.log("triggring");
+        localMutate();
+      }
+    });
+  });
+
+  useEffect(() => {
+    if (selectedChat) {
+      selectedChatCompare = selectedChat;
+      socket.emit("join_chat", selectedChat._id);
+    }
+  }, [selectedChat]);
 
   const chatsToRender = (allMessages: Message[]) => {
     return allMessages.map((item) => {
@@ -90,9 +138,10 @@ function ChatBox() {
 
     modifiedPrivateRequester
       .post(`/message`, payload)
-      .then(() => {
+      .then((res) => {
         setValue("content", "");
-        mutate();
+        socket.emit("new_message", res.data);
+        localMutate();
         router.refresh();
       })
       .catch((error) => {
@@ -101,6 +150,7 @@ function ChatBox() {
       })
       .finally(() => {
         setIsLoading(false);
+        socket.emit("stop typing", selectedChat?._id);
       });
   };
 
@@ -191,20 +241,67 @@ function ChatBox() {
         )}
       </div>
 
-      <div className="h-[120px] p-1 flex gap-3 items-center">
-        <FormTextAreaField
-          resizable
-          className="w-full"
-          id={"content"}
-          placeholder={"Enter a message"}
-          errorMessage={errors.content?.message}
-          register={register("content")}
-          disabled={false}
-        />
+      <div className="transform transition-all duration-1000">
+        {isTyping && (
+          <div className="flex items-center">
+            <Dot
+              fontWeight={800}
+              size={20}
+              className="text-purple-500 animate-bounce"
+            />
+            <Dot
+              fontWeight={800}
+              size={20}
+              className="text-purple-500 animate-bounce delay-75"
+            />
+            <Dot
+              fontWeight={800}
+              size={20}
+              className="text-purple-500 animate-bounce delay-100"
+            />
+          </div>
+        )}
+        <div className="h-[120px] p-1 flex gap-3 items-center">
+          <FormTextAreaField
+            resizable
+            className="w-full"
+            id={"content"}
+            placeholder={"Enter a message"}
+            errorMessage={errors.content?.message}
+            register={register("content", {
+              onChange: () => {
+                if (!socketConnected) {
+                  return;
+                }
 
-        <Button onClick={handleSubmit(sendMessageHandler)}>
-          <Send />
-        </Button>
+                if (!typing) {
+                  setTyping(true);
+                  socket.emit("typing", selectedChat._id);
+                }
+
+                let lastTypingTime = new Date().getTime();
+                var timerLength = 3000;
+
+                setTimeout(() => {
+                  const currentTime = new Date().getTime();
+                  const timeDiff = currentTime - lastTypingTime;
+                  if (timeDiff >= timerLength && typing) {
+                    socket.emit("stop_typing", selectedChat._id);
+                    setTyping(false);
+                  }
+                }, timerLength);
+              },
+            })}
+            disabled={false}
+          />
+
+          <Button
+            disabled={isLoading}
+            onClick={handleSubmit(sendMessageHandler)}
+          >
+            <Send />
+          </Button>
+        </div>
       </div>
     </div>
   );

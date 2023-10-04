@@ -1,5 +1,3 @@
-import { number, string } from "zod";
-
 export type SearchUser = {
   _id: string;
   username: string;
