@@ -7,9 +7,7 @@ import { Button } from "../ui/button";
 import { SenderMessage } from "./Messages";
 import { useSelectedChat } from "@/hooks/useSelectedChat";
 import { getSender } from "@/lib/chatUtils";
-import { useCurrentUser } from "@/lib/authUtils/authHooks";
 import { useUpdateGroupChat } from "@/hooks/useGroupChatModal";
-import useSWRMutation from "swr/mutation";
 import modifiedPrivateRequester from "@/services/privatier";
 import { Message, UserChats } from "./types";
 import { Skeleton } from "../ui/skeleton";
@@ -27,7 +25,8 @@ import { Socket, io } from "socket.io-client";
 import { BASE_URL } from "@/services/axios-utils";
 import { DecodedToken } from "@/lib/authUtils/cookieCtrl";
 import { DefaultEventsMap } from "@socket.io/component-emitter";
-import useSWR from "swr";
+import useSWR, { useSWRConfig } from "swr";
+import { useNotification } from "@/hooks/useNotification";
 
 let socket: Socket<DefaultEventsMap, DefaultEventsMap>,
   selectedChatCompare: UserChats;
@@ -41,6 +40,11 @@ function ChatBox({ currentUser }: Props) {
   const [typing, setTyping] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
 
+  const { notifyMessage, setNotifyMessage } = useNotification((state) => ({
+    notifyMessage: state.notifyMessage,
+    setNotifyMessage: state.setNotifyMessage,
+  }));
+
   const [socketConnected, setSocketConnected] = useState(false);
 
   const { selectedChat, setChat } = useSelectedChat((state) => ({
@@ -49,6 +53,8 @@ function ChatBox({ currentUser }: Props) {
   }));
 
   const onOpen = useUpdateGroupChat((state) => state.onOpen);
+
+  const { mutate } = useSWRConfig();
 
   const {
     isLoading: messagesLoading,
@@ -76,7 +82,11 @@ function ChatBox({ currentUser }: Props) {
         !selectedChatCompare ||
         selectedChatCompare._id !== newMessage.chat._id
       ) {
-        // notification plus one
+        if (!notifyMessage.includes(newMessage)) {
+          setNotifyMessage(newMessage);
+          mutate(`/chat`);
+          console.log("Notified");
+        }
       } else {
         console.log("triggring");
         localMutate();
@@ -242,7 +252,7 @@ function ChatBox({ currentUser }: Props) {
       </div>
 
       <div className="transform transition-all duration-1000">
-        {isTyping && (
+        {isTyping ? (
           <div className="flex items-center">
             <Dot
               fontWeight={800}
@@ -260,6 +270,8 @@ function ChatBox({ currentUser }: Props) {
               className="text-purple-500 animate-bounce delay-100"
             />
           </div>
+        ) : (
+          <></>
         )}
         <div className="h-[120px] p-1 flex gap-3 items-center">
           <FormTextAreaField
@@ -269,7 +281,7 @@ function ChatBox({ currentUser }: Props) {
             placeholder={"Enter a message"}
             errorMessage={errors.content?.message}
             register={register("content", {
-              onChange: () => {
+              onChange() {
                 if (!socketConnected) {
                   return;
                 }
@@ -283,8 +295,9 @@ function ChatBox({ currentUser }: Props) {
                 var timerLength = 3000;
 
                 setTimeout(() => {
-                  const currentTime = new Date().getTime();
-                  const timeDiff = currentTime - lastTypingTime;
+                  var currentTime = new Date().getTime();
+                  var timeDiff = currentTime - lastTypingTime;
+
                   if (timeDiff >= timerLength && typing) {
                     socket.emit("stop_typing", selectedChat._id);
                     setTyping(false);
