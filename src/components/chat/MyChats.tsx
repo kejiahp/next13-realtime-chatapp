@@ -38,7 +38,7 @@ function MyChats() {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+  }, [data, chat]);
 
   return (
     <div className="p-3 flex flex-col gap-5">

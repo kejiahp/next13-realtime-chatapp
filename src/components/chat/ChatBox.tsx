@@ -1,7 +1,7 @@
 "use client";
 
-import { ChevronLeft, Dot, Eye, Send } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import { ArrowUpCircle, ChevronLeft, Dot, Eye, Send } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
 
 import { Button } from "../ui/button";
 import { SenderMessage } from "./Messages";
@@ -59,6 +59,17 @@ function ChatBox({ currentUser }: Props) {
   const [error, setError] = useState(false);
   const [data, setDataMessage] = useState<Message[]>([]);
 
+  const chatRef = useRef<HTMLDivElement>(null);
+  const chatContainer = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    chatRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const scrollToTop = () => {
+    chatContainer.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   useEffect(() => {
     if (selectedChat?._id) {
       const fetcher = () => {
@@ -89,6 +100,10 @@ function ChatBox({ currentUser }: Props) {
     socket.on("stop_typing", () => setIsTyping(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [data]);
 
   useEffect(() => {
     socket.on("message_recieved", (newMessage: Message) => {
@@ -201,133 +216,142 @@ function ChatBox({ currentUser }: Props) {
   }
 
   return (
-    <div className="p-3 h-full md:mr-3">
-      <div className="flex items-center justify-between">
-        <div
-          onClick={() => setChat(null)}
-          className="md:hidden flex w-10 h-10 justify-center items-center rounded-md cursor-pointer bg-purple-400"
-        >
-          <ChevronLeft size={20} className="rounded-md" />
-        </div>
-
-        <h1 className="text-xl">
-          {chatName(selectedChat).length >= 30
-            ? chatName(selectedChat).slice(0, 30) + "..."
-            : chatName(selectedChat)}
-        </h1>
-
-        {selectedChat.isGroupChat ? (
+    <>
+      <div ref={chatContainer}></div>
+      <div className="p-3 h-full md:mr-3">
+        <div className="flex items-center justify-between">
           <div
-            onClick={onOpen}
-            className="flex w-10 h-10 justify-center items-center rounded-md cursor-pointer bg-purple-400"
+            onClick={() => setChat(null)}
+            className="md:hidden flex w-10 h-10 justify-center items-center rounded-md cursor-pointer bg-purple-400"
           >
-            <Eye size={20} className="rounded-md" />
+            <ChevronLeft size={20} className="rounded-md" />
           </div>
-        ) : (
-          <div></div>
-        )}
-      </div>
 
-      <div className="h-[500px] overflow-y-auto mt-2 p-2">
-        {messagesLoading ? (
-          <div className="w-full h-full">
-            {Array.from({ length: 10 }).map((_, index) => (
-              <div
-                key={index}
-                className={`w-full flex  ${
-                  index % 2 === 0 ? "justify-start" : "justify-end"
-                }`}
-              >
-                <Skeleton className="h-10 w-[200px]" />
-              </div>
-            ))}
-          </div>
-        ) : (
-          <>
-            {!data || data.length <= 0 ? null : (
-              <>
-                {chatsToRender(data).map((item, index) => (
-                  <SenderMessage
-                    key={index}
-                    createdAt={item.createdAt}
-                    username={item.username}
-                    isUser={item.isUser}
-                    message={item.message}
-                    image={item.image}
-                  />
-                ))}
-              </>
-            )}
-          </>
-        )}
-      </div>
+          <h1 className="text-xl">
+            {chatName(selectedChat).length >= 30
+              ? chatName(selectedChat).slice(0, 30) + "..."
+              : chatName(selectedChat)}
+          </h1>
 
-      <div className="transform transition-all duration-1000">
-        {isTyping ? (
-          <div className="flex items-center">
-            <Dot
-              fontWeight={800}
-              size={20}
-              className="text-purple-500 animate-bounce"
-            />
-            <Dot
-              fontWeight={800}
-              size={20}
-              className="text-purple-500 animate-bounce delay-75"
-            />
-            <Dot
-              fontWeight={800}
-              size={20}
-              className="text-purple-500 animate-bounce delay-100"
-            />
-          </div>
-        ) : (
-          <></>
-        )}
-        <div className="h-[120px] p-1 flex gap-3 items-center">
-          <FormTextAreaField
-            resizable
-            className="w-full"
-            id={"content"}
-            placeholder={"Enter a message"}
-            errorMessage={errors.content?.message}
-            register={register("content", {
-              onChange() {
-                if (!socketConnected) {
-                  return;
-                }
+          {selectedChat.isGroupChat ? (
+            <div
+              onClick={onOpen}
+              className="flex w-10 h-10 justify-center items-center rounded-md cursor-pointer bg-purple-400"
+            >
+              <Eye size={20} className="rounded-md" />
+            </div>
+          ) : (
+            <div></div>
+          )}
+        </div>
 
-                if (!typing) {
-                  setTyping(true);
-                  socket.emit("typing", selectedChat._id);
-                }
+        <div className="h-[500px] overflow-y-auto mt-2 p-2">
+          {messagesLoading ? (
+            <div className="w-full h-full">
+              {Array.from({ length: 10 }).map((_, index) => (
+                <div
+                  key={index}
+                  className={`w-full flex  ${
+                    index % 2 === 0 ? "justify-start" : "justify-end"
+                  }`}
+                >
+                  <Skeleton className="h-10 w-[200px]" />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <>
+              {!data || data.length <= 0 ? null : (
+                <>
+                  {chatsToRender(data).map((item, index) => (
+                    <SenderMessage
+                      key={index}
+                      createdAt={item.createdAt}
+                      username={item.username}
+                      isUser={item.isUser}
+                      message={item.message}
+                      image={item.image}
+                    />
+                  ))}
+                </>
+              )}
+              <div ref={chatRef}></div>
+            </>
+          )}
+        </div>
 
-                let lastTypingTime = new Date().getTime();
-                var timerLength = 3000;
+        <div className="transform transition-all duration-1000">
+          {isTyping ? (
+            <div className="flex items-center">
+              <Dot
+                fontWeight={800}
+                size={20}
+                className="text-purple-500 animate-bounce"
+              />
+              <Dot
+                fontWeight={800}
+                size={20}
+                className="text-purple-500 animate-bounce delay-75"
+              />
+              <Dot
+                fontWeight={800}
+                size={20}
+                className="text-purple-500 animate-bounce delay-100"
+              />
+            </div>
+          ) : (
+            <></>
+          )}
 
-                setTimeout(() => {
-                  var currentTime = new Date().getTime();
-                  var timeDiff = currentTime - lastTypingTime;
+          <div className="h-[120px] p-1 flex gap-3 items-center">
+            <Button size={"sm"} variant={"outline"} onClick={scrollToTop}>
+              <ArrowUpCircle size={30} />
+            </Button>
 
-                  if (timeDiff >= timerLength && typing) {
-                    socket.emit("stop_typing", selectedChat._id);
-                    setTyping(false);
+            <FormTextAreaField
+              resizable
+              className="w-full"
+              id={"content"}
+              placeholder={"Enter a message"}
+              errorMessage={errors.content?.message}
+              register={register("content", {
+                onChange() {
+                  if (!socketConnected) {
+                    return;
                   }
-                }, timerLength);
-              },
-            })}
-            disabled={false}
-          />
 
-          <Button
-            disabled={isLoading}
-            onClick={handleSubmit(sendMessageHandler)}
-          >
-            <Send />
-          </Button>
+                  if (!typing) {
+                    setTyping(true);
+                    socket.emit("typing", selectedChat._id);
+                  }
+
+                  let lastTypingTime = new Date().getTime();
+                  var timerLength = 3000;
+
+                  setTimeout(() => {
+                    var currentTime = new Date().getTime();
+                    var timeDiff = currentTime - lastTypingTime;
+
+                    if (timeDiff >= timerLength && typing) {
+                      socket.emit("stop_typing", selectedChat._id);
+                      setTyping(false);
+                    }
+                  }, timerLength);
+                },
+              })}
+              disabled={false}
+            />
+
+            <Button
+              disabled={isLoading}
+              onClick={handleSubmit(sendMessageHandler)}
+            >
+              <Send />
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

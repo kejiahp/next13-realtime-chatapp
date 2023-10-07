@@ -12,12 +12,15 @@ import toast from "react-hot-toast";
 import useAxiosAuth from "@/lib/authUtils/useAxiosAuth";
 import { SearchUser } from "./types";
 import EmptyState from "../empty-state/EmptyState";
+import { useSWRConfig } from "swr";
 
 function SideDrawer() {
   const [searchValue, setSearchValue] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [data, setData] = useState<SearchUser[]>([]);
   const authRequest = useAxiosAuth();
+
+  const { mutate } = useSWRConfig();
 
   const onSearchHandler = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -47,6 +50,7 @@ function SideDrawer() {
     authRequest
       .post(`/chat`, { userId })
       .then(() => {
+        mutate("/chat");
         onClose();
       })
       .catch(() => {
