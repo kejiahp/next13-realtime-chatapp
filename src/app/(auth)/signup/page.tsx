@@ -1,10 +1,22 @@
 import { Metadata } from "next";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import Logo from "@/components/logo/logo";
-import SignUpForm from "@/components/authentication/signup-form";
+import { Skeleton } from "@/components/ui/skeleton";
+
+const SignUpForm = dynamic(
+  () => import("@/components/authentication/signup-form"),
+  {
+    loading: () => (
+      <>
+        <Skeleton className="h-[40px] w-full" />
+      </>
+    ),
+  }
+);
 
 export const metadata: Metadata = {
   title: "Sigup - KiLoGraM",

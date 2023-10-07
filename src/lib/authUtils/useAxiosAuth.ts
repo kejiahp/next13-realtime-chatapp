@@ -59,6 +59,7 @@ const useAxiosAuth = () => {
     return () => {
       privateRequest.interceptors.request.eject(requestIntercept);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return privateRequest;

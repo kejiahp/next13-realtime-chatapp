@@ -16,6 +16,7 @@ import { useCurrentUser } from "@/lib/authUtils/authHooks";
 import { useProfile } from "@/hooks/useProfile";
 import NotificationDropdown from "../dropdown/notification-dropdown";
 import { useNotification } from "@/hooks/useNotification";
+import { useSelectedChat } from "@/hooks/useSelectedChat";
 
 function NavBar() {
   const [isLoading, setIsLoading] = useState(false);
@@ -25,12 +26,15 @@ function NavBar() {
     onOpen: state.onOpen,
   }));
 
+  const selectChat = useSelectedChat((state) => state.setChat);
+
   const { onOpen: profileOnOpen } = useProfile((state) => ({
     onOpen: state.onOpen,
   }));
 
-  const { notifyMessage } = useNotification((state) => ({
+  const { notifyMessage, setNotifyMessage } = useNotification((state) => ({
     notifyMessage: state.notifyMessage,
+    setNotifyMessage: state.setNotifyMessage,
   }));
 
   const currentUser = useCurrentUser();
@@ -79,8 +83,10 @@ function NavBar() {
         <div className="flex items-center gap-5">
           {currentUser?.uid && (
             <NotificationDropdown
+              selectChat={selectChat}
               currentUser={currentUser}
               notifyMessage={notifyMessage}
+              setNotifyMessage={setNotifyMessage}
             />
           )}
           <ThemeToggle />

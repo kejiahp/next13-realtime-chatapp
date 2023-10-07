@@ -16,9 +16,24 @@ import { DecodedToken } from "@/lib/authUtils/cookieCtrl";
 type Props = {
   currentUser: DecodedToken;
   notifyMessage: Message[];
+  selectChat: (chat: any) => void;
+  setNotifyMessage: (messages: Message[]) => void;
 };
 
-function NotificationDropdown({ notifyMessage, currentUser }: Props) {
+function NotificationDropdown({
+  notifyMessage,
+  setNotifyMessage,
+  currentUser,
+  selectChat,
+}: Props) {
+  const onNotificationClickHandler = (item: Message) => {
+    const newNotificationMsg = notifyMessage.filter(
+      (notification) => notification._id !== item._id
+    );
+    setNotifyMessage(newNotificationMsg);
+    selectChat(item.chat);
+  };
+
   const chatName = (data: any): string => {
     let returnName: string;
 
@@ -44,8 +59,19 @@ function NotificationDropdown({ notifyMessage, currentUser }: Props) {
   } else {
     notificationContent = notifyMessage.map((item, index) => (
       <div key={index}>
-        <DropdownMenuLabel>
-          New message from: {chatName(item.chat)}
+        <DropdownMenuLabel
+          className="cursor-pointer"
+          onClick={() => onNotificationClickHandler(item)}
+        >
+          <p>{chatName(item.chat)}</p>
+          <p className="text-purple-500">
+            {item.sender.username}:{" "}
+            <span className="font-normal">
+              {item.content.length >= 20
+                ? item.content.slice(0, 20)
+                : item.content}
+            </span>
+          </p>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
       </div>

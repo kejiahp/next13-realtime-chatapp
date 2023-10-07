@@ -49,7 +49,12 @@ export type Message = {
     _id: string;
     chatName: string;
     isGroupChat: boolean;
-    users: string[];
+    users: {
+      _id: string;
+      username: string;
+      profilePhoto: string;
+      email: string;
+    }[];
     groupAdmin: string[];
     createdAt: string;
     updatedAt: string;

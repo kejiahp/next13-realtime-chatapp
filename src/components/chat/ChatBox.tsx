@@ -20,12 +20,11 @@ import {
   SendMessageValidatorType,
   send_message_validator,
 } from "@/schema/messaging";
-import { useRouter } from "next/navigation";
 import { Socket, io } from "socket.io-client";
 import { BASE_URL } from "@/services/axios-utils";
 import { DecodedToken } from "@/lib/authUtils/cookieCtrl";
 import { DefaultEventsMap } from "@socket.io/component-emitter";
-import useSWR, { useSWRConfig } from "swr";
+import { useSWRConfig } from "swr";
 import { useNotification } from "@/hooks/useNotification";
 
 let socket: Socket<DefaultEventsMap, DefaultEventsMap>,
@@ -55,17 +54,6 @@ function ChatBox({ currentUser }: Props) {
   const onOpen = useUpdateGroupChat((state) => state.onOpen);
 
   const { mutate } = useSWRConfig();
-
-  // const {
-  //   isLoading: messagesLoading,
-  //   data,
-  //   mutate: localMutate,
-  //   error,
-  //   ...others
-  // } = useSWR<Message[]>(
-  //   selectedChat?._id ? `/message/${selectedChat?._id}` : null,
-  //   (url: string) => modifiedPrivateRequester.get(url).then((res) => res.data)
-  // );
 
   const [messagesLoading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -99,12 +87,13 @@ function ChatBox({ currentUser }: Props) {
 
     socket.on("typing", () => setIsTyping(true));
     socket.on("stop_typing", () => setIsTyping(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     socket.on("message_recieved", (newMessage: Message) => {
       if (
-        !selectedChatCompare || // if chat is not selected or doesn't match current chat
+        !selectedChatCompare ||
         selectedChatCompare._id !== newMessage.chat._id
       ) {
         const messageIds = notifyMessage.map((item) => item._id);
@@ -118,25 +107,6 @@ function ChatBox({ currentUser }: Props) {
       }
     });
   });
-
-  // useEffect(() => {
-  //   socket.on("message_recieved", (newMessage: Message) => {
-  //     if (
-  //       !selectedChatCompare ||
-  //       selectedChatCompare._id !== newMessage.chat._id
-  //     ) {
-  //       const messageIds = notifyMessage.map((item) => item._id);
-
-  //       if (!messageIds.includes(newMessage._id)) {
-  //         setNotifyMessage(newMessage);
-  // mutate(`/chat`);
-  //         console.log("Notified");
-  //       }
-  //     } else {
-  //       setDataMessage([...data, newMessage]);
-  //     }
-  //   });
-  // });
 
   useEffect(() => {
     if (selectedChat) {
@@ -183,8 +153,6 @@ function ChatBox({ currentUser }: Props) {
     resolver: zodResolver(send_message_validator),
   });
 
-  const router = useRouter();
-
   const sendMessageHandler = (inputData: SendMessageValidatorType) => {
     const payload = { chatId: selectedChat?._id, content: inputData.content };
 
@@ -196,7 +164,6 @@ function ChatBox({ currentUser }: Props) {
         setValue("content", "");
         socket.emit("new_message", res.data);
         setDataMessage([...data, res.data]);
-        router.refresh();
       })
       .catch((error) => {
         console.log(error);
@@ -204,7 +171,7 @@ function ChatBox({ currentUser }: Props) {
       })
       .finally(() => {
         setIsLoading(false);
-        socket.emit("stop typing", selectedChat?._id);
+        socket.emit("stop_typing", selectedChat?._id);
       });
   };
 
