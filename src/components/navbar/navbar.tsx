@@ -2,9 +2,9 @@
 
 import React, { useState } from "react";
 import { Input } from "../ui/input";
-import { Bell, Loader, Search } from "lucide-react";
+import { Loader, Search } from "lucide-react";
 import Logo from "../logo/logo";
-import Dropdown from "../dropdown/dropdown";
+import ProfileDropdown from "../dropdown/profile-dropdown";
 import ThemeToggle from "../ui/theme-toggle";
 import SideDrawer from "../chat/SideDrawer";
 import { useSearchDrawer } from "@/hooks/useSearchDrawer";
@@ -14,6 +14,8 @@ import { deleteCookie } from "@/lib/authUtils/cookieCtrl";
 import { logOutService } from "@/services/authentication";
 import { useCurrentUser } from "@/lib/authUtils/authHooks";
 import { useProfile } from "@/hooks/useProfile";
+import NotificationDropdown from "../dropdown/notification-dropdown";
+import { useNotification } from "@/hooks/useNotification";
 
 function NavBar() {
   const [isLoading, setIsLoading] = useState(false);
@@ -25,6 +27,10 @@ function NavBar() {
 
   const { onOpen: profileOnOpen } = useProfile((state) => ({
     onOpen: state.onOpen,
+  }));
+
+  const { notifyMessage } = useNotification((state) => ({
+    notifyMessage: state.notifyMessage,
   }));
 
   const currentUser = useCurrentUser();
@@ -71,14 +77,19 @@ function NavBar() {
         </div>
 
         <div className="flex items-center gap-5">
-          {currentUser?.uid && <Bell />}
+          {currentUser?.uid && (
+            <NotificationDropdown
+              currentUser={currentUser}
+              notifyMessage={notifyMessage}
+            />
+          )}
           <ThemeToggle />
           {currentUser?.uid && (
             <>
               {isLoading ? (
                 <Loader className="animate-spin" />
               ) : (
-                <Dropdown
+                <ProfileDropdown
                   image={currentUser?.profilePhoto}
                   fallback={currentUser?.username}
                   logoutfn={logoutfn}

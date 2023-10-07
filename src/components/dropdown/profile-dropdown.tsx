@@ -15,7 +15,7 @@ type Props = {
   openProfilefn?: () => void;
 };
 
-function Dropdown({ image, fallback, logoutfn, openProfilefn }: Props) {
+function ProfileDropdown({ image, fallback, logoutfn, openProfilefn }: Props) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -35,4 +35,4 @@ function Dropdown({ image, fallback, logoutfn, openProfilefn }: Props) {
   );
 }
 
-export default Dropdown;
+export default ProfileDropdown;

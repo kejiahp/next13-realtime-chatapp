@@ -56,15 +56,40 @@ function ChatBox({ currentUser }: Props) {
 
   const { mutate } = useSWRConfig();
 
-  const {
-    isLoading: messagesLoading,
-    data,
-    mutate: localMutate,
-    error,
-  } = useSWR<Message[]>(
-    selectedChat?._id ? `/message/${selectedChat?._id}` : null,
-    (url: string) => modifiedPrivateRequester.get(url).then((res) => res.data)
-  );
+  // const {
+  //   isLoading: messagesLoading,
+  //   data,
+  //   mutate: localMutate,
+  //   error,
+  //   ...others
+  // } = useSWR<Message[]>(
+  //   selectedChat?._id ? `/message/${selectedChat?._id}` : null,
+  //   (url: string) => modifiedPrivateRequester.get(url).then((res) => res.data)
+  // );
+
+  const [messagesLoading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const [data, setDataMessage] = useState<Message[]>([]);
+
+  useEffect(() => {
+    if (selectedChat?._id) {
+      const fetcher = () => {
+        setLoading(true);
+
+        modifiedPrivateRequester
+          .get(`/message/${selectedChat?._id}`)
+          .then((res) => setDataMessage(res.data))
+          .catch(() => {
+            setError(true);
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      };
+
+      fetcher();
+    }
+  }, [selectedChat?._id]);
 
   useEffect(() => {
     //instanciating the socket will emit the connect event on the backend
@@ -79,20 +104,39 @@ function ChatBox({ currentUser }: Props) {
   useEffect(() => {
     socket.on("message_recieved", (newMessage: Message) => {
       if (
-        !selectedChatCompare ||
+        !selectedChatCompare || // if chat is not selected or doesn't match current chat
         selectedChatCompare._id !== newMessage.chat._id
       ) {
-        if (!notifyMessage.includes(newMessage)) {
-          setNotifyMessage(newMessage);
+        const messageIds = notifyMessage.map((item) => item._id);
+
+        if (!messageIds.includes(newMessage._id)) {
+          setNotifyMessage([...notifyMessage, newMessage]);
           mutate(`/chat`);
-          console.log("Notified");
         }
       } else {
-        console.log("triggring");
-        localMutate();
+        setDataMessage([...data, newMessage]);
       }
     });
   });
+
+  // useEffect(() => {
+  //   socket.on("message_recieved", (newMessage: Message) => {
+  //     if (
+  //       !selectedChatCompare ||
+  //       selectedChatCompare._id !== newMessage.chat._id
+  //     ) {
+  //       const messageIds = notifyMessage.map((item) => item._id);
+
+  //       if (!messageIds.includes(newMessage._id)) {
+  //         setNotifyMessage(newMessage);
+  // mutate(`/chat`);
+  //         console.log("Notified");
+  //       }
+  //     } else {
+  //       setDataMessage([...data, newMessage]);
+  //     }
+  //   });
+  // });
 
   useEffect(() => {
     if (selectedChat) {
@@ -151,7 +195,7 @@ function ChatBox({ currentUser }: Props) {
       .then((res) => {
         setValue("content", "");
         socket.emit("new_message", res.data);
-        localMutate();
+        setDataMessage([...data, res.data]);
         router.refresh();
       })
       .catch((error) => {

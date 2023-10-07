@@ -5,13 +5,10 @@ type Store = {
   notifyMessage: Message[];
 };
 type Action = {
-  setNotifyMessage: (message: Message) => void;
+  setNotifyMessage: (message: Message[]) => void;
 };
 
 export const useNotification = create<Store & Action>((set) => ({
   notifyMessage: [],
-  setNotifyMessage: (message) =>
-    set((state) => ({
-      notifyMessage: [...state.notifyMessage, message],
-    })),
+  setNotifyMessage: (data) => set(() => ({ notifyMessage: data })),
 }));
