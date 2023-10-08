@@ -5,7 +5,7 @@ const Container = ({
   className,
 }: React.PropsWithChildren<{ className?: any }>) => {
   return (
-    <div className={`max-w-[2520px] mx-auto xl:px-12 md:px-9 ${className}`}>
+    <div className={`max-w-[2520px] mx-auto xl:px-10 md:px-9 ${className}`}>
       {children}
     </div>
   );
