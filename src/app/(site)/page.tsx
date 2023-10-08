@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 export default function Home() {
   return (
     <main
-      className="w-full h-[100vh] bg-gray-300 dark:bg-purple-300 p-10 overflow-hidden"
+      className="w-full h-[100vh] bg-gray-300 dark:bg-purple-300 p-5 sm:p-10 overflow-hidden"
       style={{
         backgroundImage: `linear-gradient(to left,rgba(0,0,0,0.2),rgba(0,0,0, 0.5)), url(./KilogramBgImage.png)`,
         backgroundRepeat: "no-repeat",
@@ -17,7 +17,9 @@ export default function Home() {
     >
       <div className="flex w-full h-full items-center gap-6 justify-between">
         <div className="flex flex-col gap-3 flex-1">
-          <h1 className="text-7xl font-bold text-white">Message privately</h1>
+          <h1 className="text-4xl sm:text-7xl font-bold text-white">
+            Message privately
+          </h1>
           <p className="w-[200px] text-white">
             Simple, reliable, private messaging and calling for free*, available
             all over the world.
@@ -28,7 +30,7 @@ export default function Home() {
               href={"/login"}
               className={cn(
                 buttonVariants({ variant: "secondary", size: "lg" }),
-                "text-xl font-bold"
+                "text-lg sm:text-xl font-bold"
               )}
             >
               Start Chatting
