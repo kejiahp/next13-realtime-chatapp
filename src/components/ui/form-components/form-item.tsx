@@ -55,6 +55,7 @@ type FormTextareaFieldType = {
   cols?: number;
   rows?: number;
   label?: string;
+  onKeyDown?: any;
   description?: string;
   placeholder: string;
   accept?: string;
@@ -70,6 +71,7 @@ export const FormTextAreaField: React.FC<FormTextareaFieldType> = ({
   cols,
   rows,
   label,
+  onKeyDown,
   description,
   placeholder,
   accept,
@@ -84,6 +86,7 @@ export const FormTextAreaField: React.FC<FormTextareaFieldType> = ({
       <div className={className}>
         {label && <Label htmlFor={id}>{label}</Label>}
         <Textarea
+          onKeyDown={onKeyDown}
           className={`${resizable ? "resize-none" : ""}`}
           id={id}
           placeholder={placeholder}

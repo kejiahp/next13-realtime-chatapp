@@ -19,8 +19,12 @@ const LoginForm = dynamic(
 );
 
 export const metadata: Metadata = {
-  title: "Login - KiLoGraM",
-  description: "Login into your kilogram account and start chat.",
+  title: "Kilogram Login: Access Your Chat App Account Securely | Kilogram App",
+  description:
+    "Securely log in to your Kilogram account. Join the conversation with ease, and enjoy seamless chatting and collaboration on Kilogram. Login now to stay connected with friends and colleagues.",
+  alternates: {
+    canonical: "/login",
+  },
 };
 
 function Page() {

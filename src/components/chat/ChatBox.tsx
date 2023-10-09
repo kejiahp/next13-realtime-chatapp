@@ -8,7 +8,6 @@ import { SenderMessage } from "./Messages";
 import { useSelectedChat } from "@/hooks/useSelectedChat";
 import { getSender } from "@/lib/chatUtils";
 import { useUpdateGroupChat } from "@/hooks/useGroupChatModal";
-import modifiedPrivateRequester from "@/services/privatier";
 import { Message, UserChats } from "./types";
 import { Skeleton } from "../ui/skeleton";
 import EmptyState from "../empty-state/EmptyState";
@@ -26,6 +25,7 @@ import { DecodedToken } from "@/lib/authUtils/cookieCtrl";
 import { DefaultEventsMap } from "@socket.io/component-emitter";
 import { useSWRConfig } from "swr";
 import { useNotification } from "@/hooks/useNotification";
+import useAxiosPrivate from "@/lib/authUtils/useAxiosPrivate";
 
 let socket: Socket<DefaultEventsMap, DefaultEventsMap>,
   selectedChatCompare: UserChats;
@@ -38,6 +38,8 @@ function ChatBox({ currentUser }: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const [typing, setTyping] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+
+  const modifiedPrivateRequester = useAxiosPrivate();
 
   const { notifyMessage, setNotifyMessage } = useNotification((state) => ({
     notifyMessage: state.notifyMessage,
@@ -88,7 +90,7 @@ function ChatBox({ currentUser }: Props) {
 
       fetcher();
     }
-  }, [selectedChat?._id]);
+  }, [selectedChat?._id, modifiedPrivateRequester]);
 
   useEffect(() => {
     //instanciating the socket will emit the connect event on the backend
@@ -314,6 +316,11 @@ function ChatBox({ currentUser }: Props) {
               id={"content"}
               placeholder={"Enter a message"}
               errorMessage={errors.content?.message}
+              onKeyDown={(e: any) => {
+                if (e.key === "Enter") {
+                  handleSubmit(sendMessageHandler)();
+                }
+              }}
               register={register("content", {
                 onChange() {
                   if (!socketConnected) {

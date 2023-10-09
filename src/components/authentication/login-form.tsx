@@ -74,21 +74,6 @@ function LoginForm() {
       <Button variant={"secondary"} onClick={handleSubmit(onSubmitHandler)}>
         Login
       </Button>
-
-      <div className="relative flex justify-center text-xs uppercase">
-        <span className="bg-background px-2 text-muted-foreground">
-          Or continue with
-        </span>
-      </div>
-
-      <Button variant="outline" type="button" disabled={false}>
-        {false ? (
-          <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-        ) : (
-          <Icons.google className="mr-2 h-4 w-4" />
-        )}{" "}
-        Google
-      </Button>
     </form>
   );
 }

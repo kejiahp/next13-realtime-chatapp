@@ -12,16 +12,18 @@ import { Skeleton } from "../ui/skeleton";
 import EmptyState from "../empty-state/EmptyState";
 import { useCurrentUser } from "@/lib/authUtils/authHooks";
 import { useGroupChatModal } from "@/hooks/useGroupChatModal";
-import modifiedPrivateRequester from "@/services/privatier";
 import { useSelectedChat } from "@/hooks/useSelectedChat";
 import { getSender } from "@/lib/chatUtils";
+import useAxiosPrivate from "@/lib/authUtils/useAxiosPrivate";
 
 function MyChats() {
   const currentUser = useCurrentUser();
 
+  const requesterPrivate = useAxiosPrivate();
+
   const { isLoading, error, data } = useSWR<UserChats[]>(
     `/chat`,
-    (url: string) => modifiedPrivateRequester.get(url).then((res) => res.data)
+    (url: string) => requesterPrivate.get(url).then((res) => res.data)
   );
 
   const { onOpen } = useGroupChatModal((state) => ({ onOpen: state.onOpen }));

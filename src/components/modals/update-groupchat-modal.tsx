@@ -12,17 +12,20 @@ import { useCurrentUser } from "@/lib/authUtils/authHooks";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { FormErrorMessage } from "../ui/form-components/form-comps";
-import modifiedPrivateRequester from "@/services/privatier";
+
 import { SearchUser } from "../chat/types";
 import toast from "react-hot-toast";
 
 import { useRouter } from "next/navigation";
 import { Badge } from "../ui/badge";
 import { Loader, X } from "lucide-react";
+import useAxiosPrivate from "@/lib/authUtils/useAxiosPrivate";
 
 function UpdateGroupChatModal() {
   const { mutate } = useSWRConfig();
   const [isLoading, setIsLoading] = useState(false);
+
+  const modifiedPrivateRequester = useAxiosPrivate();
 
   const { isOpen, onClose } = useUpdateGroupChat((state) => ({
     isOpen: state.isOpen,

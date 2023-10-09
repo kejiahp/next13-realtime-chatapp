@@ -9,16 +9,17 @@ import SideDrawerUser from "./SideDrawerUser";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import toast from "react-hot-toast";
-import useAxiosAuth from "@/lib/authUtils/useAxiosAuth";
+
 import { SearchUser } from "./types";
 import EmptyState from "../empty-state/EmptyState";
 import { useSWRConfig } from "swr";
+import useAxiosPrivate from "@/lib/authUtils/useAxiosPrivate";
 
 function SideDrawer() {
   const [searchValue, setSearchValue] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [data, setData] = useState<SearchUser[]>([]);
-  const authRequest = useAxiosAuth();
+  const authRequest = useAxiosPrivate();
 
   const { mutate } = useSWRConfig();
 

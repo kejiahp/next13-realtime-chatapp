@@ -19,6 +19,7 @@ export function setCookieFromJWT(cname: string, ctoken: string) {
   try {
     const decoded: DecodedToken = jwtDecode(ctoken);
     let expUnix = decoded.exp;
+    //access_token lifespan increased by a day
     if (cname === "tk") {
       expUnix = expUnix + 60 * 60 * 24;
     }
@@ -70,6 +71,38 @@ export function getCookie(cname: string) {
     return "";
   }
 }
+
+export async function getAsyncCookie(cname: string) {
+  return new Promise((resolve, reject) => {
+    const token = getCookie(cname);
+    if (token) {
+      resolve(token);
+    } else {
+      reject("INVALID TOKEN");
+    }
+  });
+}
+
+// export default function useStorage(key:string, type = "sessionStorage") {
+//   const [value, setValue] = useState();
+
+//   // Initial fetch from storage
+//   useEffect(() => {
+//     const storage = type === "sessionStorage" ? sessionStorage : localStorage;
+//     setValue(storage.getItem(key));
+//   }, [key, type]);
+
+//   // Persist to storage
+//   useEffect(() => {
+//     // first render, don't override/destroy existing item value
+//     if (value !== undefined) {
+//       const storage = type === "sessionStorage" ? sessionStorage : localStorage;
+//       storage.setItem(key, value);
+//     }
+//   }, [key, value, type]);
+
+//   return [value, setValue];
+// }
 
 /**
  * *Clien side function*

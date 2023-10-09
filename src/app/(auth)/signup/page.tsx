@@ -19,8 +19,13 @@ const SignUpForm = dynamic(
 );
 
 export const metadata: Metadata = {
-  title: "Sigup - KiLoGraM",
-  description: "Create a kilogram account now and start chatting",
+  title:
+    "Join Kilogram: Sign Up for the Ultimate Chat Experience | Kilogram App",
+  description:
+    "Get started with Kilogram and unlock a world of seamless communication. Sign up for your Kilogram account today to connect with friends and colleagues effortlessly. Experience the future of chatting and collaboration with Kilogram – it's simple, secure, and ready for you!",
+  alternates: {
+    canonical: "/signup",
+  },
 };
 
 function Page() {

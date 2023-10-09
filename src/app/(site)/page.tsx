@@ -42,9 +42,11 @@ export default function Home() {
           <Image
             src={"/HeroImg3.png"}
             alt="dark mode chat page"
-            width={300}
-            height={300}
-            className="object-contain w-full col-span-2 rounded-lg"
+            width={600}
+            height={400}
+            priority
+            quality={100}
+            className="object-contain w-full h-auto col-span-2 rounded-lg"
           />
 
           <Image
@@ -53,6 +55,7 @@ export default function Home() {
             width={200}
             height={200}
             priority
+            quality={100}
             className="object-contain rounded-lg"
           />
 
@@ -61,6 +64,7 @@ export default function Home() {
             alt="dark mode chat page"
             width={200}
             height={200}
+            quality={100}
             priority
             className="object-contain rounded-lg"
           />

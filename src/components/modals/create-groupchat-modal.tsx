@@ -17,14 +17,17 @@ import {
   create_groupchat_validator,
 } from "@/schema/groupchat.schema";
 import { Button } from "../ui/button";
-import modifiedPrivateRequester from "@/services/privatier";
+
 import { SearchUser } from "../chat/types";
 import toast from "react-hot-toast";
 import { mutate } from "swr";
 import { useRouter } from "next/navigation";
+import useAxiosPrivate from "@/lib/authUtils/useAxiosPrivate";
 
 function CreateGroupChatModal() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const modifiedPrivateRequester = useAxiosPrivate();
 
   const router = useRouter();
 

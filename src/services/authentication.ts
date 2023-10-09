@@ -28,9 +28,8 @@ export const loginUserService = async (payload: {
   }
 };
 
-export const logOutService = async () => {
+export const logOutService = async (refreshToken: string) => {
   try {
-    const refreshToken = getCookie("rtk");
     const res = await axios.post(
       `${BASE_URL}/api/v1/auth/logout`,
       {},

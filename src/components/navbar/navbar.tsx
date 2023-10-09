@@ -10,7 +10,7 @@ import SideDrawer from "../chat/SideDrawer";
 import { useSearchDrawer } from "@/hooks/useSearchDrawer";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { deleteCookie } from "@/lib/authUtils/cookieCtrl";
+import { deleteCookie, getAsyncCookie } from "@/lib/authUtils/cookieCtrl";
 import { logOutService } from "@/services/authentication";
 import { useCurrentUser } from "@/lib/authUtils/authHooks";
 import { useProfile } from "@/hooks/useProfile";
@@ -44,7 +44,9 @@ function NavBar() {
   const logoutfn = async () => {
     setIsLoading(true);
 
-    logOutService()
+    const refreshToken = await getAsyncCookie("rtk");
+
+    logOutService(refreshToken as string)
       .then(() => {
         deleteCookie("tk");
         deleteCookie("rtk");
