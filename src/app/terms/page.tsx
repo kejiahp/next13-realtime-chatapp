@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 function Page() {
   return (
     <Container className={"px-4"}>
-      <div className="flex flex-col gap-5 h-[500px] w-full justify-center items-start">
+      <div className="flex flex-col gap-5 w-full justify-center items-start">
         <div className="text-purple-500">
           Terms and Conditions for Kilogram Chat App
         </div>
