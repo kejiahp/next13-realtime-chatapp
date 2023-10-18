@@ -65,3 +65,5 @@ export type Message = {
   updatedAt: string;
   __v: number;
 };
+
+type JustSomeRandomType = { forAGitCommit: true };
