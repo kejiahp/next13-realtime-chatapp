@@ -5,3 +5,7 @@ export type UserType = {
   profilePhoto: string;
   email: string;
 };
+
+type SomeRandomType = {
+  rando: string | number;
+};
