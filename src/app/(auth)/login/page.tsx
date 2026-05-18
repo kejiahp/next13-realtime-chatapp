@@ -15,7 +15,7 @@ const LoginForm = dynamic(
         <Skeleton className="h-[40px] w-full" />
       </>
     ),
-  }
+  },
 );
 
 export const metadata: Metadata = {
@@ -30,12 +30,12 @@ export const metadata: Metadata = {
 function Page() {
   return (
     <>
-      <div className="container relative h-[800px] flex-col items-center justify-center grid lg:max-w-none lg:grid-cols-2 lg:px-0">
+      <div className="container relative h-full flex-col items-center justify-center grid lg:max-w-none lg:grid-cols-2 lg:px-0">
         <Link
           href="/signup"
           className={cn(
             buttonVariants({ variant: "secondary" }),
-            "absolute right-4 top-4 md:right-8 md:top-8"
+            "absolute right-4 top-4 md:right-8 md:top-8",
           )}
         >
           Sign Up
@@ -45,7 +45,7 @@ function Page() {
           <div
             className="absolute inset-0 bg-zinc-900"
             style={{
-              backgroundImage: `linear-gradient(to left,rgba(0,0,0,0.5),rgba(0,0,0, 0.7)), url("./NigerianYouths.jpg")`,
+              backgroundImage: `linear-gradient(to left,rgba(0,0,0,0.5),rgba(0,0,0, 0.7)), url("./cyberpunkbg.png")`,
               backgroundRepeat: "no-repeat",
               backgroundPosition: "center",
               backgroundSize: "cover",
