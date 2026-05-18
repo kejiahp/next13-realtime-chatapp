@@ -20,8 +20,8 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-switch": "^1.0.3",
     "@types/node": "20.3.3",
-    "@types/react": "^18.3.1",
-    "@types/react-dom": "^18.3.1",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
     "autoprefixer": "10.4.14",
     "axios": "^1.12.0",
     "bufferutil": "^4.0.7",
@@ -29,16 +29,16 @@
     "clsx": "^1.2.1",
     "cmdk": "^0.2.0",
     "dayjs": "^1.11.10",
-    "eslint": "8.44.0",
+    "eslint": "9.0.0",
     "jwt-decode": "^3.1.2",
     "lucide-react": "^0.258.0",
     "moment": "^2.29.4",
-    "next": "^14.2.33",
+    "next": "16.2.6",
     "next-auth": "^4.24.11",
     "next-themes": "^0.2.1",
     "postcss": "8.4.24",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
     "react-hook-form": "^7.45.4",
     "react-hot-toast": "^2.4.1",
     "react-select": "^5.7.5",
@@ -54,6 +54,10 @@
     "zustand": "^4.3.9"
   },
   "devDependencies": {
-    "eslint-config-next": "^14.2.33"
+    "eslint-config-next": "16.2.6"
+  },
+  "overrides": {
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3"
   }
 }
