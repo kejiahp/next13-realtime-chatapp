@@ -12,8 +12,8 @@ type DecodedToken = {
  *
  * Get current user on the server side components
  */
-export function getServerSideUser() {
-  const token = cookies().get("tk");
+export async function getServerSideUser() {
+  const token = (await cookies()).get("tk");
 
   if (!token) {
     return null;

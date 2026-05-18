@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getMiddlewareCurrentUser } from "./lib/authUtils/getServerSideUser";
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const user = getMiddlewareCurrentUser(request);
 
   if (!user) {

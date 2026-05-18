@@ -13,8 +13,8 @@ const MyChats = dynamic(() => import("@/components/chat/MyChats"), {
   ),
 });
 
-function Page() {
-  const currentUser = getServerSideUser();
+async function Page() {
+  const currentUser = await getServerSideUser();
   return (
     <SplitPage
       primaryComponent={<ChatBox currentUser={currentUser} />}
